@@ -10,7 +10,7 @@ import numpy as np
 # =========================================================================
 try:
     # Cargamos directamente tu dataset limpio
-    df = pd.read_csv("googleplaystore_limpio.csv")
+    df = pd.read_csv(".\Data\googleplaystore_limpio.csv")
     
 except Exception as e:
     print(f"Error al cargar 'googleplaystore_limpio.csv': {e}. Usando datos de respaldo.")
@@ -40,13 +40,13 @@ df.loc[outliers_idx, 'Cluster_DBSCAN'] = -1
 
 # Mapeo de nombres estratégicos para la toma de decisiones (Pestaña Gerencial)
 cluster_labels = {
-    -1: 'Outliers / Fenómenos Virales Atípicos',
-    0: 'Comportamiento Estándar del Mercado',
-    1: 'Apps Nuevas o de Bajo Rendimiento',
-    2: 'Apps Superestrellas de Alta Densidad',
-    3: 'Segmentos de Nicho Altamente Populares'
+    -1: 'Comportamientos Atípicos',
+    0: 'Mercado General',
+    1: 'Apps Emergentes',
+    2: 'Apps de Alto Rendimiento',
+    3: 'Nichos Populares'
 }
-df['Cluster_Name'] = df['Cluster_DBSCAN'].map(cluster_labels)
+df['NOMBRES_DE_CLUSTERS'] = df['Cluster_DBSCAN'].map(cluster_labels)
 
 # Definición de la variable objetivo según el umbral de éxito institucional (Rating > 4.2)
 df['Es_Exitosa'] = df['Rating'].apply(lambda x: 1 if x > 4.2 else 0)
@@ -80,7 +80,7 @@ app.layout = html.Div([
     
     # Barra Lateral con Filtros basados en las categorías de tu archivo limpio
     html.Div([
-        html.H2("Play Store IQ", style={"color": "#2c3e50", "font-weight": "bold"}),
+        html.H2("Play Store DataSet", style={"color": "#2c3e50", "font-weight": "bold"}),
         html.Hr(),
         html.P("Filtros de Negocio:", style={"font-weight": "bold"}),
         html.Label("Selecciona Categorías:"),
@@ -97,7 +97,7 @@ app.layout = html.Div([
 
     # Panel Central Principal
     html.Div([
-        html.H1("Ecosistema Analítico End-to-End: Google Play", style={"color": "#34495e"}),
+        html.H1("Dashboard Analítico para Evaluación de Apps mediante Machine Learning", style={"color": "#34495e"}),
         html.P("Visualización interactiva combinando modelos supervisados y estructuración por densidad."),
         html.Br(),
 
@@ -137,7 +137,7 @@ def update_dashboard(tab, selected_categories):
         
         # Gráfico Scatter: Reviews vs Rating
         fig_scatter = px.scatter(
-            filtered_df, x="Reviews", y="Rating", color="Cluster_Name",
+            filtered_df, x="Reviews", y="Rating", color="NOMBRES_DE_CLUSTERS",
             hover_name="App", log_x=True,
             title="Mapeo del Mercado: Volumen de Reseñas vs Calificación",
             color_discrete_sequence=px.colors.qualitative.Bold
@@ -147,7 +147,7 @@ def update_dashboard(tab, selected_categories):
 
         # Gráfico de Barras: Distribución de Aplicaciones por Clúster
         fig_bar = px.histogram(
-            filtered_df, x="Cluster_Name", color="Cluster_Name",
+            filtered_df, x="NOMBRES_DE_CLUSTERS", color="NOMBRES_DE_CLUSTERS",
             title="Distribución de Volumen por Clúster Estratégico",
             color_discrete_sequence=px.colors.qualitative.Bold
         )
